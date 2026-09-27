@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BlogSpace — Module 1</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,system-ui,sans-serif;background:#0b0e0c;color:#f4f7f4;line-height:1.6}
+a{text-decoration:none;color:inherit}.nav{height:70px;padding:0 6%;display:flex;align-items:center;justify-content:space-between;background:#111512;border-bottom:1px solid #29312c;position:sticky;top:0;z-index:10}.brand{font-size:24px;font-weight:800}.brand span,.green{color:#51d383}.navlinks{display:flex;gap:20px;align-items:center}.navlinks a{cursor:pointer}.navlinks a:hover{color:#51d383}
+.btn{border:0;background:#42cf7b;color:#07120b;font-weight:800;border-radius:11px;padding:12px 19px;cursor:pointer}.outline{background:transparent;color:#fff;border:1px solid #3a453e}.small{padding:8px 13px}.hero{min-height:72vh;display:grid;place-items:center;text-align:center;padding:50px 7%;background:radial-gradient(circle at 80% 20%,#153b26,transparent 35%)}.hero h1{font-size:clamp(44px,8vw,90px);line-height:1.02;margin:8px 0}.hero p{max-width:680px;margin:20px auto;color:#aeb8b1;font-size:18px}.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:25px}.section{max-width:1100px;margin:auto;padding:70px 6%}.heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}.eyebrow{color:#51d383;font-size:12px;font-weight:800;letter-spacing:2px}.heading h2{font-size:34px;margin:5px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.card,.form{background:#141815;border:1px solid #29312c;border-radius:18px;padding:25px}.card h3{font-size:21px;margin:14px 0 7px}.muted{color:#8e9992}.tag{display:inline-block;background:#1b3827;color:#62df92;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:bold}.meta{font-size:12px;color:#718078;margin-top:16px}.wrap{min-height:calc(100vh - 70px);display:grid;place-items:center;padding:35px 18px}.form{width:min(520px,100%)}.wide{width:min(780px,100%)}label{display:block;font-weight:bold;margin-top:17px}input,textarea,select{width:100%;margin-top:7px;background:#0c0f0d;color:white;border:1px solid #354039;border-radius:10px;padding:12px;font:inherit}textarea{resize:vertical}.full{width:100%;margin-top:22px}.message{text-align:center;color:#51d383}.danger{color:#ff8585!important;background:none;border:0;cursor:pointer;margin-top:15px}.dash{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}footer{text-align:center;color:#66716a;border-top:1px solid #202620;padding:30px}.hidden{display:none!important}
+@media(max-width:700px){.nav{padding:0 4%}.navlinks{gap:9px;font-size:13px}.navlinks a:nth-child(2),.navlinks a:nth-child(3){display:none}.grid{grid-template-columns:1fr}.hero{min-height:65vh}.section{padding:50px 5%}.dash{align-items:flex-start;flex-direction:column}.heading{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" onclick="show('home')">Blog<span>Space</span></a>
+  <nav class="navlinks">
+    <a onclick="show('home')">Home</a><a onclick="show('dashboard')">Dashboard</a><a onclick="show('create')">Create Blog</a>
+    <a id="loginNav" onclick="show('login')">Login</a><a id="registerNav" class="btn small" onclick="show('register')">Register</a>
+    <a id="logoutNav" class="hidden" onclick="logout()">Logout</a>
+  </nav>
+</header>
+
+<section id="home">
+  <div class="hero"><div>
+    <div class="eyebrow">WRITE • SHARE • INSPIRE</div>
+    <h1>Ideas worth <span class="green">sharing.</span></h1>
+    <p>A responsive blog application built with HTML, CSS and JavaScript for Module 1 — Frontend Development.</p>
+    <div class="actions"><button class="btn" onclick="show('create')">Start Writing</button><button class="btn outline" onclick="document.getElementById('posts').scrollIntoView()">Explore Posts</button></div>
+  </div></div>
+  <div class="section" id="posts">
+    <div class="heading"><div><div class="eyebrow">LATEST STORIES</div><h2>Featured posts</h2></div></div>
+    <div id="homePosts" class="grid"></div>
+  </div>
+</section>
+
+<section id="login" class="wrap hidden">
+<form class="form" onsubmit="login(event)">
+<div class="eyebrow">WELCOME BACK</div><h1>Log in</h1><p class="muted">Continue to your BlogSpace dashboard.</p>
+<label>Email<input id="loginEmail" type="email" required placeholder="you@example.com"></label>
+<label>Password<input id="loginPassword" type="password" required placeholder="••••••••"></label>
+<button class="btn full">Login</button><p id="loginMsg" class="message"></p>
+<p class="muted">New here? <a class="green" onclick="show('register')">Create an account</a></p>
+</form></section>
+
+<section id="register" class="wrap hidden">
+<form class="form" onsubmit="register(event)">
+<div class="eyebrow">JOIN BLOGSPACE</div><h1>Create account</h1><p class="muted">Start publishing your ideas today.</p>
+<label>Full name<input id="regName" required placeholder="Your name"></label>
+<label>Email<input id="regEmail" type="email" required placeholder="you@example.com"></label>
+<label>Password<input id="regPassword" type="password" minlength="6" required placeholder="At least 6 characters"></label>
+<label>Confirm password<input id="regConfirm" type="password" minlength="6" required placeholder="Repeat password"></label>
+<button class="btn full">Create account</button><p id="regMsg" class="message"></p>
+</form></section>
+
+<section id="dashboard" class="section hidden">
+<div class="dash"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>Dashboard</h1><p class="muted">Manage your published stories.</p></div><button class="btn" onclick="show('create')">+ Create Blog</button></div>
+<div id="dashPosts" class="grid"></div>
+</section>
+
+<section id="create" class="wrap hidden">
+<form class="form wide" onsubmit="createPost(event)">
+<div class="eyebrow">CREATE SOMETHING NEW</div><h1>Write a blog post</h1>
+<label>Title<input id="title" maxlength="100" required placeholder="Give your story a title"></label>
+<label>Category<select id="category"><option>Technology</option><option>Education</option><option>Travel</option><option>Lifestyle</option><option>Career</option></select></label>
+<label>Excerpt<textarea id="excerpt" maxlength="180" rows="3" required placeholder="A short description"></textarea></label>
+<label>Content<textarea id="content" rows="12" required placeholder="Start writing..."></textarea></label>
+<div class="actions" style="justify-content:flex-start"><button class="btn">Publish Post</button><button type="button" class="btn outline" onclick="show('dashboard')">Cancel</button></div>
+<p id="createMsg" class="message"></p>
+</form></section>
+
+<footer>© 2026 BlogSpace — Module 1 Frontend Development</footer>
+
+<script>
+const defaults=[
+{title:"Building Better Habits as a Developer",category:"Career",excerpt:"Small daily practices can make learning to code more consistent and enjoyable.",content:"Consistency beats intensity.",date:"Sep 21, 2026"},
+{title:"Why Responsive Design Matters",category:"Technology",excerpt:"A modern interface should feel natural on phones, tablets, and desktops.",content:"Responsive design helps users everywhere.",date:"Sep 20, 2026"},
+{title:"Learning by Building Projects",category:"Education",excerpt:"Projects turn concepts into practical skills and give you something real to showcase.",content:"Build, test and improve.",date:"Sep 18, 2026"}];
+function posts(){return JSON.parse(localStorage.getItem("blogspace_posts")||"null")||defaults}
+function save(p){localStorage.setItem("blogspace_posts",JSON.stringify(p))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function card(p,i){return `<article class="card"><span class="tag">${esc(p.category)}</span><h3>${esc(p.title)}</h3><p class="muted">${esc(p.excerpt)}</p><div class="meta">${esc(p.date||"Today")}</div>${i!==undefined?`<button class="danger" onclick="del(${i})">Delete post</button>`:""}</article>`}
+function render(){homePosts.innerHTML=posts().slice(0,3).map(card).join("");dashPosts.innerHTML=posts().map(card).join("")||"<p class='muted'>No posts yet.</p>"}
+function show(id){document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="dashboard")render();scrollTo(0,0)}
+function register(e){e.preventDefault();if(regPassword.value!==regConfirm.value){regMsg.textContent="Passwords do not match.";regMsg.classList.add("danger");return}localStorage.setItem("blogspace_user",JSON.stringify({name:regName.value,email:regEmail.value,password:regPassword.value}));regMsg.textContent="Account created! You can now log in.";setTimeout(()=>show("login"),700)}
+function login(e){e.preventDefault();let u=JSON.parse(localStorage.getItem("blogspace_user")||"null");if(!u||u.email!==loginEmail.value||u.password!==loginPassword.value){loginMsg.textContent="Invalid email or password.";loginMsg.classList.add("danger");return}localStorage.setItem("logged","1");updateNav();show("dashboard")}
+function logout(){localStorage.removeItem("logged");show("home");updateNav()}
+function createPost(e){e.preventDefault();let p=posts();p.unshift({title:title.value,category:category.value,excerpt:excerpt.value,content:content.value,date:new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})});save(p);createMsg.textContent="Post published successfully!";setTimeout(()=>show("dashboard"),600)}
+function del(i){let p=posts();p.splice(i,1);save(p);render()}
+function updateNav(){let on=localStorage.getItem("logged");loginNav.classList.toggle("hidden",!!on);registerNav.classList.toggle("hidden",!!on);logoutNav.classList.toggle("hidden",!on)}
+render();updateNav();
+</script>
+</body></html>
