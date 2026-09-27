@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Module 2 - BlogSpace</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#111827;color:#fff;padding:16px}.wrap{width:min(1050px,92%);margin:auto}
+nav{display:flex;justify-content:space-between;align-items:center}button{border:0;border-radius:10px;padding:11px 16px;background:#4f46e5;color:white;font-weight:bold;cursor:pointer}
+.secondary{background:#e9ecf5;color:#172033}.hero,.card,.blogs{background:white;border-radius:18px;padding:25px;margin:22px 0;box-shadow:0 8px 25px #0000000d}
+.hero h1{font-size:clamp(30px,6vw,50px);margin:8px 0}.tag{color:#4f46e5;font-weight:bold;font-size:12px;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}input,textarea{width:100%;padding:13px;margin:7px 0;border:1px solid #d7dce5;border-radius:10px;font:inherit}
+.hidden{display:none!important}.msg{padding:12px;border-radius:10px;background:#e8f5e9;margin:15px 0}.head{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.blog{border:1px solid #e4e7ee;border-radius:12px;padding:18px;margin:14px 0}.meta{color:#667085;font-size:13px}.blog p{white-space:pre-wrap}
+footer{text-align:center;color:#667085;padding:25px}@media(max-width:700px){.grid{grid-template-columns:1fr}nav{gap:10px;flex-direction:column}.head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><nav><h2>BlogSpace</h2><div id="nav"></div></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="tag">MODULE 2 • BACKEND DEVELOPMENT</div><h1>Create, share and read blogs.</h1><p>Registration • Login • Create Blog • REST API project demo</p></section>
+<div id="msg" class="msg hidden"></div>
+<section id="auth" class="grid">
+<form class="card" id="reg"><h2>Create Account</h2>
+<input id="rn" placeholder="Full name" required><input id="re" type="email" placeholder="Email" required>
+<input id="rp" type="password" placeholder="Password (6+ characters)" required><button>Register</button></form>
+<form class="card" id="login"><h2>User Login</h2>
+<input id="le" type="email" placeholder="Email" required><input id="lp" type="password" placeholder="Password" required><button>Login</button></form>
+</section>
+<section id="create" class="card hidden"><div class="head"><div><h2>Create Blog</h2><p id="welcome"></p></div><button class="secondary" onclick="logout()">Logout</button></div>
+<form id="blogForm"><input id="bt" placeholder="Blog title" required><textarea id="bc" rows="6" placeholder="Write your blog..." required></textarea><button>Publish Blog</button></form></section>
+<section class="blogs"><div class="head"><h2>Latest Blogs</h2><button class="secondary" onclick="render()">Refresh</button></div><div id="list"></div></section>
+</main><footer>Module 2 Backend Development • Node.js • Express.js • REST API</footer>
+<script>
+let users=JSON.parse(localStorage.getItem("m2users")||"[]"),blogs=JSON.parse(localStorage.getItem("m2blogs")||"[]"),user=JSON.parse(localStorage.getItem("m2user")||"null");
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("m2users",JSON.stringify(users));localStorage.setItem("m2blogs",JSON.stringify(blogs));if(user)localStorage.setItem("m2user",JSON.stringify(user))}
+function msg(t){$("msg").textContent=t;$("msg").classList.remove("hidden");setTimeout(()=>$("msg").classList.add("hidden"),2500)}
+function render(){
+ $("auth").classList.toggle("hidden",!!user);$("create").classList.toggle("hidden",!user);
+ $("nav").innerHTML=user?`<span>Hi, ${esc(user.name)}</span> <button class="secondary" onclick="logout()">Logout</button>`:`<span>Module 2 Project</span>`;
+ if(user)$("welcome").textContent=`Logged in as ${user.email}`;
+ $("list").innerHTML=blogs.length?blogs.slice().reverse().map((b,i)=>`<article class="blog"><h3>${esc(b.title)}</h3><div class="meta">By ${esc(b.author)} • ${new Date(b.date).toLocaleString()}</div><p>${esc(b.content)}</p>${user&&b.uid===user.id?`<button class="secondary" onclick="del(${blogs.length-1-i})">Delete</button>`:""}</article>`).join(""):"<p>No blogs yet. Create the first one!</p>";
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+$("reg").onsubmit=e=>{e.preventDefault();if($("rp").value.length<6)return msg("Password must have 6+ characters.");if(users.some(x=>x.email===$("re").value.toLowerCase()))return msg("Email already registered.");let u={id:Date.now().toString(),name:$("rn").value,email:$("re").value.toLowerCase(),pass:$("rp").value};users.push(u);save();e.target.reset();msg("Registration successful. Now login.")};
+$("login").onsubmit=e=>{e.preventDefault();let u=users.find(x=>x.email===$("le").value.toLowerCase()&&x.pass===$("lp").value);if(!u)return msg("Invalid email or password.");user={id:u.id,name:u.name,email:u.email};save();e.target.reset();render();msg("Login successful.")};
+$("blogForm").onsubmit=e=>{e.preventDefault();blogs.push({title:$("bt").value,content:$("bc").value,author:user.name,uid:user.id,date:new Date().toISOString()});save();e.target.reset();render();msg("Blog published successfully.")};
+function del(i){if(confirm("Delete this blog?")){blogs.splice(i,1);save();render();msg("Blog deleted.")}}
+function logout(){user=null;localStorage.removeItem("m2user");render();msg("Logged out.")}
+render();
+</script>
+</body>
+</html>
